@@ -22,25 +22,11 @@ BEGIN
     BEGIN
         IF clock'event AND clock = '1' then
             reg_din(7) <= din;
-            reg_din(6) <= reg_din(7);
-            reg_din(5) <= reg_din(6)
-        END PROCESS SR : ;
 
+            reg_din(6 downto 0) <= reg_din(7 downto 1);
+    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            end if;
+        END PROCESS SR:;
 
         TYPE state IS()
