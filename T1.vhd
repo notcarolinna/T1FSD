@@ -7,6 +7,8 @@ ENTITY tp1 IS
         din : IN STD_LOGIC; -- Entada
         clock : IN STD_LOGIC; -- Entada
         reset : IN STD_LOGIC; -- Entada
+        a : IN STD_LOGIC; -- Entrada
+        b : IN STD_LOGIC; -- Entrada
 
         prog : IN STD_LOGIC_VECTOR(2 DOWNTO 0); -- Entada
         padrao : IN STD_LOGIC_VECTOR(7 DOWNTO 0); -- Entrada
@@ -18,7 +20,6 @@ ENTITY tp1 IS
 
 END ENTITY;
 ARCHITECTURE tp1 OF tp1 IS
-    --implementação do reg_din SR
 BEGIN
 
     TYPE STATE IS (IDLE, p1, p2, p3, BSC, PR, BLK, RESET); -- Etapas da máquina de estados
@@ -27,7 +28,6 @@ BEGIN
     SIGNAL EF : state; -- Estado futuro 
 
     --reg_din = escadinha deitada no inicio do circuito
-
     SIGNAL reg_din : STD_LOGIC_VECTOR(7 DOWNTO 0);
 
     -- implementação dos sinais possíveis
@@ -52,7 +52,6 @@ BEGIN
     -- signal alarme_int: std_logic := '0';
     -- implementação dos registadores
 
-    -- P1
 BEGIN
     SR PROCESS (clock)
 BEGIN
@@ -62,30 +61,128 @@ BEGIN
     END IF;
 END PROCESS SR;
 
--- implementação de um flip flop do tipo 1
-BEGIN
-flip_flop : PROCESS (clock)
-BEGIN
-    IF clock'event AND clock = '1'THEN
-        Q <= padrao; -- será que tem q declarar esse Q em algum lugar?
-        EA <= NOT padrao;
-    END IF;
-END PROCESS flip_flop;
+-- MÁQUINA DE ESTADOS -------------------------------------------------------------------------------------------------------
 
---implementação de um flip flop do tipo 2
+PROCESS ()
 BEGIN
-flip_flop_mux : PROCESS (clock)
-BEGIN
-    IF clock'event AND clock = '1' THEN
-        Q <= -- MUX 2:1 
-            EA <= -- NOT MUX 2:1
-        END IF;
-    END PROCESS flip_flop_mux;
+    CASE EA IS
 
-    -- implementação do mux 2:1
-BEGIN
-BEGIN
-    mux : PROCESS (1, 0, EA) -- tem q conferir como coloca as entradas fixadas em um e zero bonitinho
-    BEGIN
-        IF EA = '0' THEN
-            -- D <= 
+        WHEN IDLE => -- prog {1,2,3} programando {p1, p2, p3} 
+            IF prog = "001" THEN
+                EF <= p1;
+            ELSIF prog = "010" THEN
+                EF = p2;
+            ELSIF prog = "011" THEN
+                EF <= p3;
+            ELSIF prog = "100" THEN
+                EF <= BSC;
+            END IF;
+
+            ---------------------------------------------------
+
+        WHEN BSC => -- quando estiver no busca
+            IF match = '1' THEN -- se deu match vai pro PER
+                EF <= PER;
+
+            ELSIF prog = "101" THEN -- se o prog = 5, vai pro BLK
+                EF <= BLK;
+
+            ELSIF prog = "111" THEN -- se o prog = 7, vai pro RESET
+                EF <= RESET;
+            END IF;
+
+            ---------------------------------------------------
+
+        WHEN PER => -- quando estiver no perigo
+            IF cont = "11" THEN -- se o cont = 3, volta pro busca
+                EF <= BSC;
+            END IF;
+
+            ---------------------------------------------------
+
+        WHEN BLK => -- quando estiver bloqueado
+            IF prog = "110" THEN -- se o prog = 6, volta para a busca
+                EF <= BSC;
+            ELSIF prog = "111" THEN -- se o prog = 7, vai pro reset
+                EF <= RESET;
+            END IF
+
+            ---------------------------------------------------
+
+        WHEN RESET => -- quando estiver no reset
+            IF prog = "000" THEN -- se prog = 0, vai para o IDLE
+                EF <= IDLE;
+            END IF;
+
+            -- implementação de um flip flop do tipo 1 -----------------------------------------------------------------------------------
+
+        BEGIN
+            flip_flop : PROCESS (clock)
+            BEGIN
+                IF clock'event AND clock = '1'THEN
+                    P1 <= padrao;
+                    EA <= NOT padrao;
+                END IF;
+            END PROCESS flip_flop;
+
+        BEGIN
+            flip_flop : PROCESS (clock)
+            BEGIN
+                IF clock'event AND clock = '1'THEN
+                    P2 <= padrao;
+                    EA <= NOT padrao;
+                END IF;
+            END PROCESS flip_flop;
+
+        BEGIN
+            flip_flop : PROCESS (clock)
+            BEGIN
+                IF clock'event AND clock = '1'THEN
+                    P3 <= padrao;
+                    EA <= NOT padrao;
+                END IF;
+            END PROCESS flip_flop;
+
+            --implementação de um flip flop do tipo 2 --------------------------------------------------------------------------------------
+
+        BEGIN
+            flip_flop_mux : PROCESS (clock)
+            BEGIN
+                IF clock'event AND clock = '1' THEN
+                    valid_P1 <= -- MUX 2:1 
+                        EA <= -- NOT MUX 2:1
+                    END IF;
+                END PROCESS flip_flop_mux;
+
+            BEGIN
+                flip_flop_mux : PROCESS (clock)
+                BEGIN
+                    IF clock'event AND clock = '1' THEN
+                        valid_P2 <= -- MUX 2:1 
+                            EA <= -- NOT MUX 2:1
+                        END IF;
+                    END PROCESS flip_flop_mux;
+
+                BEGIN
+                    flip_flop_mux : PROCESS (clock)
+                    BEGIN
+                        IF clock'event AND clock = '1' THEN
+                            valid_P3 <= -- MUX 2:1 
+                                EA <= -- NOT MUX 2:1
+                            END IF;
+                        END PROCESS flip_flop_mux;
+
+                        ---------------------------------------------------
+
+                        -- implementação do mux 2:1 ------------------------------------------------------------------------------------------------------
+                    BEGIN
+                        mux : PROCESS (a, b, EA) -- tem q conferir como coloca as entradas fixadas em um e zero bonitinho
+                        BEGIN
+                            a <= '1';
+                            b <= '0';
+                            IF EA = '1'THEN
+                                -- D <= a;
+                            ELSIF EA = '0' THEN
+                                -- D  <= b;
+                            END IF;
+    END PROCESS mux;
