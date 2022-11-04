@@ -207,3 +207,44 @@ BEGIN
 
             -- A implementação de um valid_x é bem semelhante com a dos registradores normais, só muda o segundo elsif
             -- e o que vai do lado do reset.
+                    
+                    --- tem q fazer o processo do clock------------
+                    
+                    ----------isso tem q ser baseado em um evento de clock------ o marlon disse q é um jeito mais tranquilo de fazer
+              when prog = '001' =>
+                    p1 <= padrão;
+                        
+              when prog = '010' =>                  ---------------- iśso substituiria o flip flop 1------------
+                    p2 <= padrao;
+                    
+              when prog = '011' =>
+                    p3 <= padrao;
+                   
+                   --------------------------------------------------------------------------------------------- 
+               ----- processo para manter "ligado" por 3 ciclos--------
+                ----- ele fez um novo tipo de buscando, o wait_st, e o st é de sextou, olhas as linhas q eu te mandei no whats q tem q adaptar paras nossas entradas mas aqui tem mto barulho e eu n consigo
+                ----- n sei se preciso dos parenteses, no quadro ele botou
+                process(clock)
+                begin
+                    if ( clock'event and clock = '1') then
+                        if (ea = wait_st) then
+                            if(en = '1') then
+                                ea<= sextou;
+                            cont <= 1;
+                            saida <= '1';
+                        elsif
+                            ea<= wait_st;
+                        elsif(ea = sextou) then
+                            if (cont < 3) then
+                                cont <= cont +1;
+                                saida<= '1';
+                            elsif
+                                cont <= 0;
+                                saida <= '0';
+                    end if;
+               
+              ----- pro comparador combinacional --------------
+              ----- ele só vai liberar o sinal C_px quando o vetor do reg_din e o vetor de px forem iguais, da mesma forma para os outros-----
+              ------ o match_x só vai ser um quando C_px e valid_x forem '1'
+                               
+                                
