@@ -1,3 +1,5 @@
+-- A partir da 189 tem coisa nova ;)
+
 LIBRARY IEEE;
 USE IEEE.std_logic_1164.ALL;
 USE IEEE.std_logic_unsigned.ALL;
@@ -26,11 +28,8 @@ BEGIN
 
     SIGNAL EA : state; -- Estado atual
     SIGNAL EF : state; -- Estado futuro 
-
-    --reg_din = escadinha deitada no inicio do circuito
     SIGNAL reg_din : STD_LOGIC_VECTOR(7 DOWNTO 0);
 
-    -- implementação dos sinais possíveis
     SIGNAL P1 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "--";
     SIGNAL P2 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "--";
     SIGNAL P3 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "--";
@@ -105,7 +104,7 @@ BEGIN
                 EF <= BSC;
             ELSIF prog = "111" THEN -- se o prog = 7, vai pro reset
                 EF <= RESET;
-            END IF
+            END IF;
 
             ---------------------------------------------------
 
@@ -149,40 +148,62 @@ BEGIN
             flip_flop_mux : PROCESS (clock)
             BEGIN
                 IF clock'event AND clock = '1' THEN
-                    valid_P1 <= -- MUX 2:1 
-                        EA <= -- NOT MUX 2:1
-                    END IF;
-                END PROCESS flip_flop_mux;
+                    valid_P1 <= ;-- MUX 2:1 
+                    EA <= ;-- NOT MUX 2:1
+                END IF;
+            END PROCESS flip_flop_mux;
 
+        BEGIN
+            flip_flop_mux : PROCESS (clock)
             BEGIN
-                flip_flop_mux : PROCESS (clock)
-                BEGIN
-                    IF clock'event AND clock = '1' THEN
-                        valid_P2 <= -- MUX 2:1 
-                            EA <= -- NOT MUX 2:1
-                        END IF;
-                    END PROCESS flip_flop_mux;
+                IF clock'event AND clock = '1' THEN
+                    valid_P2 <= ; -- MUX 2:1 
+                    EA <= ;-- NOT MUX 2:1
+                END IF;
+            END PROCESS flip_flop_mux;
 
-                BEGIN
-                    flip_flop_mux : PROCESS (clock)
-                    BEGIN
-                        IF clock'event AND clock = '1' THEN
-                            valid_P3 <= -- MUX 2:1 
-                                EA <= -- NOT MUX 2:1
-                            END IF;
-                        END PROCESS flip_flop_mux;
+        BEGIN
+            flip_flop_mux : PROCESS (clock)
+            BEGIN
+                IF clock'event AND clock = '1' THEN
+                    valid_P3 <= ; -- MUX 2:1 
+                    EA <= ;-- NOT MUX 2:1
+                END IF;
+            END PROCESS flip_flop_mux;
 
-                        ---------------------------------------------------
+            ---------------------------------------------------
 
-                        -- implementação do mux 2:1 ------------------------------------------------------------------------------------------------------
-                    BEGIN
-                        mux : PROCESS (a, b, EA) -- tem q conferir como coloca as entradas fixadas em um e zero bonitinho
-                        BEGIN
-                            a <= '1';
-                            b <= '0';
-                            IF EA = '1'THEN
-                                -- D <= a;
-                            ELSIF EA = '0' THEN
-                                -- D  <= b;
-                            END IF;
-    END PROCESS mux;
+            -- implementação do mux 2:1 ------------------------------------------------------------------------------------------------------
+        BEGIN
+            mux : PROCESS (a, b, EA) -- tem q conferir como coloca as entradas fixadas em um e zero bonitinho
+            BEGIN
+                a <= '1';
+                b <= '0';
+                IF EA = '1'THEN
+                    -- D <= a;
+                ELSIF EA = '0' THEN
+                    -- D  <= b;
+                END IF;
+            END PROCESS mux;
+
+            -- Implementação de registradores -----------------------------------------------------
+
+            -- rising_edge é uma subida de clock.
+
+            PROCESS () -- Confirma se aqui dentro realmente vai o clock e reset
+            BEGIN
+                IF reset = '1' THEN
+                    P1 <= (); -- tb n sei oq vai aqui dentro
+                ELSIF rising_edge(clock) THEN
+                    IF EA = p1 THEN
+                        P1 <= ; -- provavelmente aqui dentro vai um padrão, tenta perguntar pra alguém tomaz
+                    END IF;
+                END IF;
+            END PROCESS;
+
+            -- No caso será necessário implementar a mesma coisa pro p2 e p3, só que eu acho que tem algo errado
+            -- no sentido de ter o P1 e p1 (maiúsculo e minúsculo), pois as chances de entrarem em conflito e confundirem são altas
+            -- pergunta pro marlon se nosso feto está de fato certo, apesar de que pra mim não tem chance de erro.
+
+            -- A implementação de um valid_x é bem semelhante com a dos registradores normais, só muda o segundo elsif
+            -- e o que vai do lado do reset.
