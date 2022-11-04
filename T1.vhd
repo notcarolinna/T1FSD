@@ -1,4 +1,4 @@
--- A partir da 211 tem coisa nova ;)
+-- A partir da 211 tem coisa nova ;) mas olha comentarios nos teus comentários kkkkkkk
 
 LIBRARY IEEE;
 USE IEEE.std_logic_1164.ALL;
