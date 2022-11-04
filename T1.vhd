@@ -219,7 +219,7 @@ BEGIN
                     
               when prog = '011' =>
                     p3 <= padrao;
-                   
+                   --O VALID_X SÓ VAI SER '1' QUANDO O PX RECEBE UM VALOS, SE N VAI SER 0, ISSO TA DESCRITO NAS ONDAS, DA PRA FZR TUDO DIRETO JUNTO AQUI EM CIMA, DAI PODEMOS EXCLUIR TUDO AQUILO DOS FLIP FLOPS E DOS MUX
                    --------------------------------------------------------------------------------------------- 
                ----- processo para manter "ligado" por 3 ciclos--------
                 ----- ele fez um novo tipo de buscando, o wait_st, e o st é de sextou, olhas as linhas q eu te mandei no whats q tem q adaptar paras nossas entradas mas aqui tem mto barulho e eu n consigo
