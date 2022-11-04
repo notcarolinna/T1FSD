@@ -211,6 +211,8 @@ BEGIN
                     --- tem q fazer o processo do clock------------
                     
                     ----------isso tem q ser baseado em um evento de clock------ o marlon disse q é um jeito mais tranquilo de fazer
+             
+            IF( clock'event e clock = '1') then -- n sei se isso pode ser assim     
               when prog = '001' =>
                     p1 <= padrão;
                         
