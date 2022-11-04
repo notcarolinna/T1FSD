@@ -202,7 +202,7 @@ BEGIN
             END PROCESS;
 
             -- No caso será necessário implementar a mesma coisa pro p2 e p3, só que eu acho que tem algo errado
-            -- no sentido de ter o P1 e p1 (maiúsculo e minúsculo), pois as chances de entrarem em conflito e confundirem são altas
+            -- no sentido de ter o P1 e p1 (maiúsculo e minúsculo), pois as chances de entrarem em conflito e confundirem são altas     CORRETO, ELE N DIFERENCIA MAIUSCULO E MINÚSCULO MAS N VOU MUDAR TUDO AGORA, TO FOCANDO EM PEDIR COISAS E COPIAR COISAS  Q ELE TA FZND
             -- pergunta pro marlon se nosso feto está de fato certo, apesar de que pra mim não tem chance de erro.
 
             -- A implementação de um valid_x é bem semelhante com a dos registradores normais, só muda o segundo elsif
