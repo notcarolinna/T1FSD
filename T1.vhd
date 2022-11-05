@@ -1,16 +1,18 @@
--- A partir da 211 tem coisa nova ;) mas olha comentarios nos teus comentários kkkkkkk
-
+--------------------------------------
+-- Biblioteca
+--------------------------------------
 LIBRARY IEEE;
 USE IEEE.std_logic_1164.ALL;
 USE IEEE.std_logic_unsigned.ALL;
 
+--------------------------------------
+-- Entidade
+--------------------------------------
 ENTITY tp1 IS
     PORT (
         din : IN STD_LOGIC; -- Entada
         clock : IN STD_LOGIC; -- Entada
         reset : IN STD_LOGIC; -- Entada
-        a : IN STD_LOGIC; -- Entrada   ---- isso tmb
-        b : IN STD_LOGIC; -- Entrada   --- se a parte la de baixo estiver certa da pra tirar isso
 
         prog : IN STD_LOGIC_VECTOR(2 DOWNTO 0); -- Entada
         padrao : IN STD_LOGIC_VECTOR(7 DOWNTO 0); -- Entrada
@@ -21,18 +23,23 @@ ENTITY tp1 IS
     );
 
 END ENTITY;
+
+--------------------------------------
+-- Arquitetura
+--------------------------------------
+
 ARCHITECTURE tp1 OF tp1 IS
 BEGIN
 
-    TYPE STATE IS (IDLE, st1, st2, st3, BSC, PR, BLK, RESET); -- Etapas da máquina de estados -- troque o p1,p2 e p3 pelo q ta ai, pra n confundir com os sinais de fora da maquina de estados
+    TYPE STATE IS (IDLE, p1, p2, p3, BSC, PR, BLK, RESET); -- Etapas da máquina de estados
 
     SIGNAL EA : state; -- Estado atual
     SIGNAL EF : state; -- Estado futuro 
     SIGNAL reg_din : STD_LOGIC_VECTOR(7 DOWNTO 0);
 
-    SIGNAL P1 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "00000000";
-    SIGNAL P2 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "00000000";
-    SIGNAL P3 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "00000000";
+    SIGNAL P1 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "--";
+    SIGNAL P2 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "--";
+    SIGNAL P3 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "--";
 
     SIGNAL C_P1 : STD_LOGIC := '0';
     SIGNAL C_P2 : STD_LOGIC := '0';
@@ -42,14 +49,13 @@ BEGIN
     SIGNAL valid_P2 : STD_LOGIC := '0';
     SIGNAL valid_P3 : STD_LOGIC := '0';
 
-    SIGNAL match_P1 : STD_LOGIC := '0';
-    SIGNAL match_P2 : STD_LOGIC := '0';
-    SIGNAL match_P3 : STD_LOGIC := '0';
-    SIGNAL match : STD_LOGIC := '0';
+    SIGNAL match_P1 : STD_LOGIC := '--';
+    SIGNAL match_P2 : STD_LOGIC := '--';
+    SIGNAL match_P3 : STD_LOGIC := '--';
+    SIGNAL match : STD_LOGIC := '--';
 
-    -- signal cont: std_logic_vector(1 downto 0) := "00";
-    signal alarme_int: std_logic := '0';
-    -- implementação dos registadores
+    SIGNAL cont : STD_LOGIC_VECTOR(1 DOWNTO 0) := "00";
+    SIGNAL alarme_int : STD_LOGIC := '0';
 
 BEGIN
     SR PROCESS (clock)
@@ -62,8 +68,19 @@ END PROCESS SR;
 
 -- MÁQUINA DE ESTADOS -------------------------------------------------------------------------------------------------------
 
-PROCESS ()
+PROCESS (clock, reset)
 BEGIN
+    IF reset = '1' THEN
+        EA <= IDLE;
+        cont <= "00";
+    ELSIF rising_edge(clock) THEN
+        EA <= PE;
+    END IF;
+END PROCESS;
+
+PROCESS (clock, reset)
+BEGIN
+
     CASE EA IS
 
         WHEN IDLE => -- prog {1,2,3} programando {p1, p2, p3} 
@@ -106,183 +123,48 @@ BEGIN
                 EF <= RESET;
             END IF;
 
-            ---------------------------------------------------
-
         WHEN RESET => -- quando estiver no reset
             IF prog = "000" THEN -- se prog = 0, vai para o IDLE
                 EF <= IDLE;
             END IF;
+    END CASE;
+END PROCESS;
 
-            -- implementação de um flip flop do tipo 1 -----------------------------------------------------------------------------------
+-- REGISTRADORES ---------------------------------------------------
 
-        BEGIN
-            flip_flop : PROCESS (clock)
-            BEGIN
-                IF clock'event AND clock = '1'THEN
-                    P1 <= padrao;
-                    EA <= NOT padrao;
-                END IF;
-            END PROCESS flip_flop;
+PROCESS (clock, reset)
+BEGIN
+    IF reset = '1' THEN
+        reg_din <= (OTHERS => '0');
+    ELSIF resing_edge(clock) THEN
+        reg_din(7) <= din;
+        reg_din(6) <= reg_din(7);
+        reg_din(5) <= reg_din(6);
+        reg_din(4) <= reg_din(5);
+        reg_din(3) <= reg_din(4);
+        reg_din(2) <= reg_din(3);
+        reg_din(1) <= reg_din(2);
+        reg_din(0) <= reg_din(1);
+    END IF;
+END PROCESS;
 
-        BEGIN
-            flip_flop : PROCESS (clock)
-            BEGIN
-                IF clock'event AND clock = '1'THEN
-                    P2 <= padrao;
-                    EA <= NOT padrao;
-                END IF;
-            END PROCESS flip_flop;
+-- CIRUITOS ---------------------------------------------------
 
-        BEGIN
-            flip_flop : PROCESS (clock)
-            BEGIN
-                IF clock'event AND clock = '1'THEN
-                    P3 <= padrao;
-                    EA <= NOT padrao;
-                END IF;
-            END PROCESS flip_flop;
+C_p1 <= '1' WHEN reg_din = p1
+    ELSE
+    '0';
+C_p2 <= '1' WHEN reg_din = p2
+    ELSE
+    '0';
+C_p3 <= '1' WHEN reg_din = p3
+    ELSE
+    '0';
 
-            --implementação de um flip flop do tipo 2 --------------------------------------------------------------------------------------
+match_P1 <= C_P1 AND valid_P1;
+match_P2 <= C_P2 AND valid_P2;
+match_P3 <= C_P3 AND valid_P3;
+match <= (match_P1 OR match_P2 OR match_P3);
+alarme <= alarme_int;
+dout <= din AND (NOT alarme_int);
 
-        BEGIN
-            flip_flop_mux : PROCESS (clock)
-            BEGIN
-                IF clock'event AND clock = '1' THEN
-                    valid_P1 <= ;-- MUX 2:1 
-                    EA <= ;-- NOT MUX 2:1
-                END IF;
-            END PROCESS flip_flop_mux;
-
-        BEGIN
-            flip_flop_mux : PROCESS (clock)
-            BEGIN
-                IF clock'event AND clock = '1' THEN
-                    valid_P2 <= ; -- MUX 2:1 
-                    EA <= ;-- NOT MUX 2:1
-                END IF;
-            END PROCESS flip_flop_mux;
-
-        BEGIN
-            flip_flop_mux : PROCESS (clock)
-            BEGIN
-                IF clock'event AND clock = '1' THEN
-                    valid_P3 <= ; -- MUX 2:1 
-                    EA <= ;-- NOT MUX 2:1
-                END IF;
-            END PROCESS flip_flop_mux;
-
-            ---------------------------------------------------
-
-            -- implementação do mux 2:1 ------------------------------------------------------------------------------------------------------
-        BEGIN
-            mux : PROCESS (a, b, EA) -- tem q conferir como coloca as entradas fixadas em um e zero bonitinho
-            BEGIN
-                a <= '1';
-                b <= '0';
-                IF EA = '1'THEN
-                    -- D <= a;
-                ELSIF EA = '0' THEN
-                    -- D  <= b;
-                END IF;
-            END PROCESS mux;
-
-            -- Implementação de registradores -----------------------------------------------------
-
-            -- rising_edge é uma subida de clock.
-
-            PROCESS () -- Confirma se aqui dentro realmente vai o clock e reset
-            BEGIN
-                IF reset = '1' THEN
-                    P1 <= (); -- tb n sei oq vai aqui dentro
-                ELSIF rising_edge(clock) THEN
-                    IF EA = p1 THEN
-                        P1 <= ; -- provavelmente aqui dentro vai um padrão, tenta perguntar pra alguém tomaz
-                    END IF;
-                END IF;
-            END PROCESS;
-
-            -- No caso será necessário implementar a mesma coisa pro p2 e p3, só que eu acho que tem algo errado
-            -- no sentido de ter o P1 e p1 (maiúsculo e minúsculo), pois as chances de entrarem em conflito e confundirem são altas     CORRETO, ELE N DIFERENCIA MAIUSCULO E MINÚSCULO MAS N VOU MUDAR TUDO AGORA, TO FOCANDO EM PEDIR COISAS E COPIAR COISAS  Q ELE TA FZND
-            -- pergunta pro marlon se nosso feto está de fato certo, apesar de que pra mim não tem chance de erro.
-
-            -- A implementação de um valid_x é bem semelhante com a dos registradores normais, só muda o segundo elsif
-            -- e o que vai do lado do reset.
-                    
-                    --- tem q fazer o processo do clock------------
-                    
-                    ----------isso tem q ser baseado em um evento de clock------ o marlon disse q é um jeito mais tranquilo de fazer
-             
-            IF( clock'event e clock = '1') then -- n sei se isso pode ser assim     
-              when prog = '001' =>
-                    p1 <= padrão;
-                    valid_p1 <='1';
-                        
-              when prog = '010' =>                  ---------------- iśso substituiria o flip flop 1 e a parte dos  valid os flip flops do tipo 2 se estiver certo assim------------
-                    p2 <= padrao;                  ------- teria q perguntar pra alguém q entende mais, mas tmb n sei pq faltaria as entradas do ea nisso td q eu n faço ideia de onde botar----
-                    valid_p2 <='1';
-                    
-              when prog = '011' =>
-                    p3 <= padrao;
-                    valid_p3 <='1';
-              elsif 
-                  valid_p1<='0';
-                    valid_p2 <= '0';
-                    valid_p3 <= '0';
-             end if;
-                   --O VALID_X SÓ VAI SER '1' QUANDO O PX RECEBE UM VALOS, SE N VAI SER 0, ISSO TA DESCRITO NAS ONDAS, DA PRA FZR TUDO DIRETO JUNTO AQUI EM CIMA, DAI PODEMOS EXCLUIR TUDO AQUILO DOS FLIP FLOPS E DOS MUX
-                   ---------------------------------------------------------------------------------------------
-                 
-               ----- processo para manter "ligado" por 3 ciclos--------
-                ----- ele fez um novo tipo de buscando, o wait_st, e o st é de sextou, olhas as linhas q eu te mandei no whats q tem q adaptar paras nossas entradas mas aqui tem mto barulho e eu n consigo
-                ----- n sei se preciso dos parenteses, no quadro ele botou
-                process(clock)
-                begin
-                    if ( clock'event and clock = '1') then
-                        if (ea = wait_st) then
-                            if(en = '1') then
-                                ea<= sextou;
-                            cont <= 1;
-                            saida <= '1';
-                        elsif
-                            ea<= wait_st;
-                        elsif(ea = sextou) then
-                            if (cont < 3) then
-                                cont <= cont +1;
-                                saida<= '1';
-                            elsif
-                                cont <= 0;
-                                saida <= '0';
-                    end if;
-               
-              ----- pro comparador combinacional --------------
-              ----- ele só vai liberar o sinal C_px quando o vetor do reg_din e o vetor de px forem iguais, da mesma forma para os outros-----
-              ------ o match_x só vai ser um quando C_px e valid_x forem '1'
-                        
-                       if reg_din = p1 
-                           c_p1 <= '1';
-                       elsif c_p1 <= '0';
-                        
-                      if reg_din = p2 
-                           c_p2 <= '1';                 ---- n tenho certeza se é só isso----
-                       elsif c_p2 <= '0';  
-                        
-                      if reg_din = p3
-                           c_p3<= '1';
-                       elsif c_p3 <= '0';
-                  -------------------------------------------------------------------------------------------------
-                        -- seguindo no esquema do circuito.. mas n sei mto como conectar tudo e nem se a sintaxe ta totalmente certa
-                     c_p1 and valid_p1 => match_p1 --- c_p1 e valid_p1 geram o sinal match_p1, mais uma vez n sei se é assim a sintaxe
-                     c_p2 and valid_p2 => match_p2 
-                     c_p3 and valid_p3 => match_p3 
-                   ----------------------------------------------------------------------------------------------------------
-                        --- seguindo mais um pouco no circuito....
-                      match_p1 or match_p2 or match_p3 => match
-                        ----------------------------------------------------------------------------------------
-                        -- tem agora a parte do flip flop com um mux com uma entrada q depende do match e q sai o sinal do alarme _int dai eu n faço ideia de como faz
-                       -- agora a parte do alarme_int
-                        din and (not alarme_int) => dout;
-                        alarme_int => alarme;
-                        
-                       
-                               
-                                
+END ARCHITECTURE;
