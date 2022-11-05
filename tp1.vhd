@@ -232,6 +232,27 @@ BEGIN
     END IF;
 END PROCESS;
 
+---------------------------------------------------
+
+PROCESS (clock, reset) -- alarme_int
+BEGIN
+    IF reset = '1' THEN
+        alarme_int <= '0';
+    ELSIF rising_edge(clock) THEN
+        IF match = '1' THEN
+            alarme_int <= '1';
+        ELSIF cont = "11" THEN
+            alarme_int <= '0';
+        ELSIF EA = BLK THEN
+            alarme_int <= '1';
+        ELSIF EA = BSC THEN
+            alarme_int <= '0';
+        ELSIF EA = RESET_STATE THEN
+            alarme_int <= '0';
+        END IF;
+    END IF;
+END PROCESS;
+
 -- CIRUITOS ---------------------------------------------------
 
 C_p1 <= '1' WHEN reg_din = p1
