@@ -24,7 +24,7 @@ END ENTITY;
 ARCHITECTURE tp1 OF tp1 IS
 BEGIN
 
-    TYPE STATE IS (IDLE, p1, p2, p3, BSC, PR, BLK, RESET); -- Etapas da máquina de estados
+    TYPE STATE IS (IDLE, st1, st2, st3, BSC, PR, BLK, RESET); -- Etapas da máquina de estados -- troque o p1,p2 e p3 pelo q ta ai, pra n confundir com os sinais de fora da maquina de estados
 
     SIGNAL EA : state; -- Estado atual
     SIGNAL EF : state; -- Estado futuro 
