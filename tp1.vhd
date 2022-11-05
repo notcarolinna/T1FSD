@@ -132,7 +132,7 @@ END PROCESS;
 
 -- REGISTRADORES ---------------------------------------------------
 
-PROCESS (clock, reset)
+PROCESS (clock, reset) --reg_din
 BEGIN
     IF reset = '1' THEN
         reg_din <= (OTHERS => '0');
@@ -145,6 +145,90 @@ BEGIN
         reg_din(2) <= reg_din(3);
         reg_din(1) <= reg_din(2);
         reg_din(0) <= reg_din(1);
+    END IF;
+END PROCESS;
+
+---------------------------------------------------
+
+PROCESS (clock, reset) -- P1
+BEGIN
+    IF reset = '1' THEN
+        P1 <= (OTHERS => '0');
+    ELSIF rising_edge(clock) THEN
+        IF EA = UM THEN
+            P1 <= padrao;
+        END IF;
+    END IF;
+END PROCESS;
+
+---------------------------------------------------
+
+PROCESS (clock, reset) -- P2
+BEGIN
+    IF reset = '1' THEN
+        P2 <= (OTHERS => '0');
+    ELSIF rising_edge(clock) THEN
+        IF EA = DOIS THEN
+            P2 <= padrao;
+        END IF;
+    END IF;
+END PROCESS;
+
+---------------------------------------------------
+
+PROCESS (clock, reset) -- P3
+BEGIN
+    IF reset = '1' THEN
+        P3 <= (OTHERS => '0');
+    ELSIF rising_edge(clock) THEN
+        IF EA = TRES THEN
+            P3 <= padrao;
+        END IF;
+    END IF;
+END PROCESS;
+
+---------------------------------------------------
+
+PROCESS (clock, reset) -- valid_P1
+BEGIN
+    IF reset = '1' THEN
+        valid_P1 <= '0';
+    ELSIF rising_edge(clock) THEN
+        IF EA = UM THEN
+            valid_P1 <= '1';
+        ELSIF EA = RESET_STATE THEN
+            valid_P1 <= '0';
+        END IF;
+    END IF;
+END PROCESS;
+
+---------------------------------------------------
+
+PROCESS (clock, reset) -- valid_P2
+BEGIN
+    IF reset = '1' THEN
+        valid_p2 <= '0';
+    ELSIF rising_edge(clock) THEN
+        IF EA = DOIS THEN
+            valid_p2 <= '1';
+        ELSIF EA = RESET_STATE THEN
+            valid_p2 <= '0';
+        END IF;
+    END IF;
+END PROCESS;
+
+---------------------------------------------------
+
+PROCESS (clock, reset) -- valid_P3
+BEGIN
+    IF reset = '1' THEN
+        valid_p3 <= '0';
+    ELSIF rising_edge(clock) THEN
+        IF EA = TRES THEN
+            valid_p3 <= '1';
+        ELSIF EA = RESET_STATE THEN
+            valid_p3 <= '0';
+        END IF;
     END IF;
 END PROCESS;
 
