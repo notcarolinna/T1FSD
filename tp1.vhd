@@ -37,9 +37,9 @@ BEGIN
     SIGNAL EF : state; -- Estado futuro 
     SIGNAL reg_din : STD_LOGIC_VECTOR(7 DOWNTO 0);
 
-    SIGNAL P1 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "--";
-    SIGNAL P2 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "--";
-    SIGNAL P3 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "--";
+    SIGNAL P1 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "0";
+    SIGNAL P2 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "0";
+    SIGNAL P3 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "0";
 
     SIGNAL C_P1 : STD_LOGIC := '0';
     SIGNAL C_P2 : STD_LOGIC := '0';
@@ -49,10 +49,10 @@ BEGIN
     SIGNAL valid_P2 : STD_LOGIC := '0';
     SIGNAL valid_P3 : STD_LOGIC := '0';
 
-    SIGNAL match_P1 : STD_LOGIC := '--';
-    SIGNAL match_P2 : STD_LOGIC := '--';
-    SIGNAL match_P3 : STD_LOGIC := '--';
-    SIGNAL match : STD_LOGIC := '--';
+    SIGNAL match_P1 : STD_LOGIC := '0';
+    SIGNAL match_P2 : STD_LOGIC := '0';
+    SIGNAL match_P3 : STD_LOGIC := '0';
+    SIGNAL match : STD_LOGIC := '0';
 
     SIGNAL cont : STD_LOGIC_VECTOR(1 DOWNTO 0) := "00";
     SIGNAL alarme_int : STD_LOGIC := '0';
