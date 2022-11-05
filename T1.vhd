@@ -9,8 +9,8 @@ ENTITY tp1 IS
         din : IN STD_LOGIC; -- Entada
         clock : IN STD_LOGIC; -- Entada
         reset : IN STD_LOGIC; -- Entada
-        a : IN STD_LOGIC; -- Entrada
-        b : IN STD_LOGIC; -- Entrada
+        a : IN STD_LOGIC; -- Entrada   ---- isso tmb
+        b : IN STD_LOGIC; -- Entrada   --- se a parte la de baixo estiver certa da pra tirar isso
 
         prog : IN STD_LOGIC_VECTOR(2 DOWNTO 0); -- Entada
         padrao : IN STD_LOGIC_VECTOR(7 DOWNTO 0); -- Entrada
@@ -215,14 +215,23 @@ BEGIN
             IF( clock'event e clock = '1') then -- n sei se isso pode ser assim     
               when prog = '001' =>
                     p1 <= padrão;
+                    valid_p1 <='1';
                         
-              when prog = '010' =>                  ---------------- iśso substituiria o flip flop 1------------
-                    p2 <= padrao;
+              when prog = '010' =>                  ---------------- iśso substituiria o flip flop 1 e a parte dos  valid os flip flops do tipo 2 se estiver certo assim------------
+                    p2 <= padrao;                  ------- teria q perguntar pra alguém q entende mais, mas tmb n sei pq faltaria as entradas do ea nisso td q eu n faço ideia de onde botar----
+                    valid_p2 <='1';
                     
               when prog = '011' =>
                     p3 <= padrao;
+                    valid_p3 <='1';
+              elsif 
+                  valid_p1<='0';
+                    valid_p2 <= '0';
+                    valid_p3 <= '0';
+             end if;
                    --O VALID_X SÓ VAI SER '1' QUANDO O PX RECEBE UM VALOS, SE N VAI SER 0, ISSO TA DESCRITO NAS ONDAS, DA PRA FZR TUDO DIRETO JUNTO AQUI EM CIMA, DAI PODEMOS EXCLUIR TUDO AQUILO DOS FLIP FLOPS E DOS MUX
-                   --------------------------------------------------------------------------------------------- 
+                   ---------------------------------------------------------------------------------------------
+                 
                ----- processo para manter "ligado" por 3 ciclos--------
                 ----- ele fez um novo tipo de buscando, o wait_st, e o st é de sextou, olhas as linhas q eu te mandei no whats q tem q adaptar paras nossas entradas mas aqui tem mto barulho e eu n consigo
                 ----- n sei se preciso dos parenteses, no quadro ele botou
@@ -248,5 +257,32 @@ BEGIN
               ----- pro comparador combinacional --------------
               ----- ele só vai liberar o sinal C_px quando o vetor do reg_din e o vetor de px forem iguais, da mesma forma para os outros-----
               ------ o match_x só vai ser um quando C_px e valid_x forem '1'
+                        
+                       if reg_din = p1 
+                           c_p1 <= '1';
+                       elsif c_p1 <= '0';
+                        
+                      if reg_din = p2 
+                           c_p2 <= '1';                 ---- n tenho certeza se é só isso----
+                       elsif c_p2 <= '0';  
+                        
+                      if reg_din = p3
+                           c_p3<= '1';
+                       elsif c_p3 <= '0';
+                  -------------------------------------------------------------------------------------------------
+                        -- seguindo no esquema do circuito.. mas n sei mto como conectar tudo e nem se a sintaxe ta totalmente certa
+                     c_p1 and valid_p1 => match_p1 --- c_p1 e valid_p1 geram o sinal match_p1, mais uma vez n sei se é assim a sintaxe
+                     c_p2 and valid_p2 => match_p2 
+                     c_p3 and valid_p3 => match_p3 
+                   ----------------------------------------------------------------------------------------------------------
+                        --- seguindo mais um pouco no circuito....
+                      match_p1 or match_p2 or match_p3 => match
+                        ----------------------------------------------------------------------------------------
+                        -- tem agora a parte do flip flop com um mux com uma entrada q depende do match e q sai o sinal do alarme _int dai eu n faço ideia de como faz
+                       -- agora a parte do alarme_int
+                        din and (not alarme_int) => dout;
+                        alarme_int => alarme;
+                        
+                       
                                
                                 
