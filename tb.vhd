@@ -37,7 +37,7 @@ architecture tb of tb is
   -- LFSR: ----------------------------------------------- x^19+x^18+x^17+x^14+xˆ9+1
   constant GP : integer := 19 ;
   constant polinomio : std_logic_vector(GP-1 downto 0) := "1110010000100000000";
-  constant seed : std_logic_vector(GP-1 downto 0)      := "1101101110110110010";
+  constant seed : std_logic_vector(GP-1 downto 0)      := "1011101011100111100";
   signal lfsr, w_mask: std_logic_vector(GP-1 downto 0);
   ----------------------------------------------------------------------------
 
