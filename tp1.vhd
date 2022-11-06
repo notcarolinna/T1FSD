@@ -36,9 +36,9 @@ ARCHITECTURE tp1 OF tp1 IS
     SIGNAL EF : state; -- Estado futuro 
     SIGNAL reg_din : STD_LOGIC_VECTOR(7 DOWNTO 0);
 
-    SIGNAL P1 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "0";
-    SIGNAL P2 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "0";
-    SIGNAL P3 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "0";
+    SIGNAL P1 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "00000000";
+    SIGNAL P2 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "00000000";
+    SIGNAL P3 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "00000000";
 
     SIGNAL C_P1 : STD_LOGIC := '0';
     SIGNAL C_P2 : STD_LOGIC := '0';
@@ -91,19 +91,34 @@ BEGIN
         END IF;
     END PROCESS;
 
+    PROCESS(EA, match, prog, cont)
+    BEGIN
     CASE EA IS
-
         WHEN IDLE => -- prog {1,2,3} programando {p1, p2, p3} 
             IF prog = "001" THEN
                 EF <= SP1;
             ELSIF prog = "010" THEN
-                EF = SP2;
+                EF <= SP2;
             ELSIF prog = "011" THEN
                 EF <= SP3;
             ELSIF prog = "100" THEN
                 EF <= BSC;
             END IF;
+        
+        WHEN SP1 =>
+            IF prog = "000" THEN
+                EF <= IDLE;
+            END IF;
+        
+        WHEN SP2 =>
+            IF prog = "000" THEN
+                EF <= IDLE;
+            END IF;
 
+        WHEN SP3 =>
+            IF prog = "000" THEN
+                EF <= IDLE;
+            END IF;
             ---------------------------------------------------
 
         WHEN BSC => -- quando estiver no busca
@@ -138,7 +153,7 @@ BEGIN
                 EF <= IDLE;
             END IF;
     END CASE;
-END PROCESS;
+    END PROCESS;
 
 -- REGISTRADORES ---------------------------------------------------
 
@@ -146,7 +161,7 @@ PROCESS (clock, reset) --reg_din
 BEGIN
     IF reset = '1' THEN
         reg_din <= (OTHERS => '0');
-    ELSIF resing_edge(clock) THEN
+    ELSIF rising_edge(clock) THEN
         reg_din(7) <= din;
         reg_din(6) <= reg_din(7);
         reg_din(5) <= reg_din(6);
