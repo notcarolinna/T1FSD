@@ -34,7 +34,7 @@ ARCHITECTURE tp1 OF tp1 IS
 
     SIGNAL EA : state; -- Estado atual
     SIGNAL EF : state; -- Estado futuro 
-    SIGNAL reg_din : STD_LOGIC_VECTOR(7 DOWNTO 0);
+    SIGNAL reg_din : STD_LOGIC_VECTOR(7 DOWNTO 0) := "00000000";
 
     SIGNAL P1 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "00000000";
     SIGNAL P2 : STD_LOGIC_VECTOR(7 DOWNTO 0) := "00000000";
@@ -59,7 +59,7 @@ ARCHITECTURE tp1 OF tp1 IS
     -- CLOCK -------------------------------------------------------------------------------------------------------
 
 BEGIN
-    PROCESS (clock)
+    PROCESS (clock) -- ou (clock, reset)
     BEGIN
         IF clock'event AND clock = '1' THEN
             reg_din(7) <= din;
@@ -157,7 +157,7 @@ BEGIN
 
 -- REGISTRADORES ---------------------------------------------------
 
-PROCESS (clock, reset) --reg_din
+PROCESS (reset, clock) --reg_din
 BEGIN
     IF reset = '1' THEN
         reg_din <= (OTHERS => '0');
