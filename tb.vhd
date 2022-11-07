@@ -24,9 +24,9 @@ architecture tb of tb is
 
   type padroes is array(natural range <>) of test_record;
   constant padrao_de_teste : padroes := (
-    (t =>   4, prog => "001", padrao => x"23"),   
-    (t =>  10, prog => "010", padrao => x"B8"),
-    (t =>  15, prog => "011", padrao => x"D4"),
+    (t =>   4, prog => "001", padrao => x"68"),   
+    (t =>  10, prog => "010", padrao => x"F2"),
+    (t =>  15, prog => "011", padrao => x"D5"),
     (t =>  25, prog => "100", padrao => x"FF"),    -- ATIVA A COMPARAÇÃO
     (t =>  70, prog => "101", padrao => x"FF"),    -- bloqueia
     (t =>  80, prog => "110", padrao => x"FF"),    -- reinicia a comparação
@@ -36,8 +36,8 @@ architecture tb of tb is
 
   -- LFSR: ----------------------------------------------- x^19+x^18+x^17+x^14+xˆ9+1
   constant GP : integer := 19 ;
-  constant polinomio : std_logic_vector(GP-1 downto 0) := "1110010000100000000";
-  constant seed : std_logic_vector(GP-1 downto 0)      := "1011101011100111100";
+  constant polinomio : std_logic_vector(GP-1 downto 0) := "1101101110110110010";
+  constant seed : std_logic_vector(GP-1 downto 0)      := "1001110101100010001";
   signal lfsr, w_mask: std_logic_vector(GP-1 downto 0);
   ----------------------------------------------------------------------------
 
