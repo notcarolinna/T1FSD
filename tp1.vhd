@@ -10,9 +10,9 @@ USE IEEE.std_logic_unsigned.ALL;
 --------------------------------------
 ENTITY tp1 IS
     PORT (
-        din : IN STD_LOGIC; -- Entada
-        clock : IN STD_LOGIC; -- Entada
-        reset : IN STD_LOGIC; -- Entada
+        din : IN STD_LOGIC; -- Entrada
+        clock : IN STD_LOGIC; -- Entrada
+        reset : IN STD_LOGIC; -- Entrada
 
         prog : IN STD_LOGIC_VECTOR(2 DOWNTO 0); -- Entada
         padrao : IN STD_LOGIC_VECTOR(7 DOWNTO 0); -- Entrada
